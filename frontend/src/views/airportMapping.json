@@ -1,0 +1,159 @@
+{
+    "airports": [
+    {
+        "code": "",
+        "english_name": "",
+        "vietnamese_name": "",
+        "city_vietnamese": "",
+        "city_english": ""
+        },
+      {
+        "code": "SGN",
+        "english_name": "Tan Son Nhat International Airport",
+        "vietnamese_name": "Sân bay quốc tế Tân Sơn Nhất",
+        "city_vietnamese": "TP Hồ Chí Minh",
+        "city_english": "Ho Chi Minh City"
+      },
+      {
+        "code": "HAN",
+        "english_name": "Noi Bai International Airport",
+        "vietnamese_name": "Sân bay quốc tế Nội Bài",
+        "city_vietnamese": "Hà Nội",
+        "city_english": "Hanoi"
+      },
+      {
+        "code": "DAD",
+        "english_name": "Da Nang International Airport",
+        "vietnamese_name": "Sân bay quốc tế Đà Nẵng",
+        "city_vietnamese": "Đà Nẵng",
+        "city_english": "Da Nang"
+      },
+      {
+        "code": "CXR",
+        "english_name": "Cam Ranh International Airport",
+        "vietnamese_name": "Sân bay quốc tế Cam Ranh",
+        "city_vietnamese": "Khánh Hòa",
+        "city_english": "Khanh Hoa"
+      },
+      {
+        "code": "VCA",
+        "english_name": "Can Tho International Airport",
+        "vietnamese_name": "Sân bay quốc tế Cần Thơ",
+        "city_vietnamese": "Cần Thơ",
+        "city_english": "Can Tho"
+      },
+      {
+        "code": "HUI",
+        "english_name": "Phu Bai International Airport",
+        "vietnamese_name": "Sân bay quốc tế Phú Bài",
+        "city_vietnamese": "Thừa Thiên Huế",
+        "city_english": "Hue"
+      },
+      {
+        "code": "VII",
+        "english_name": "Vinh International Airport",
+        "vietnamese_name": "Sân bay quốc tế Vinh",
+        "city_vietnamese": "Nghệ An",
+        "city_english": "Vinh"
+      },
+      {
+        "code": "PXU",
+        "english_name": "Pleiku Airport",
+        "vietnamese_name": "Sân bay Pleiku",
+        "city_vietnamese": "Gia Lai",
+        "city_english": "Pleiku"
+      },
+      {
+        "code": "UIH",
+        "english_name": "Phu Cat Airport",
+        "vietnamese_name": "Sân bay Phù Cát",
+        "city_vietnamese": "Bình Định",
+        "city_english": "Quy Nhon"
+      },
+      {
+        "code": "VCS",
+        "english_name": "Con Dao Airport",
+        "vietnamese_name": "Sân bay Côn Đảo",
+        "city_vietnamese": "Bà Rịa - Vũng Tàu",
+        "city_english": "Con Dao"
+      },
+      {
+        "code": "ORD",
+        "english_name": "Chicago O'Hare International Airport",
+        "vietnamese_name": "Sân bay quốc tế O'Hare Chicago",
+        "city_vietnamese": "Chicago",
+        "city_english": "Chicago"
+      },
+      {
+        "code": "ATL",
+        "english_name": "Hartsfield-Jackson Atlanta International Airport",
+        "vietnamese_name": "Sân bay quốc tế Atlanta Hartsfield-Jackson",
+        "city_vietnamese": "Atlanta",
+        "city_english": "Atlanta"
+      },
+      {
+        "code": "MIA",
+        "english_name": "Miami International Airport",
+        "vietnamese_name": "Sân bay quốc tế Miami",
+        "city_vietnamese": "Miami",
+        "city_english": "Miami"
+      },
+      {
+        "code": "SFO",
+        "english_name": "San Francisco International Airport",
+        "vietnamese_name": "Sân bay quốc tế San Francisco",
+        "city_vietnamese": "San Francisco",
+        "city_english": "San Francisco"
+      },
+      {
+        "code": "SEA",
+        "english_name": "Seattle-Tacoma International Airport",
+        "vietnamese_name": "Sân bay quốc tế Seattle-Tacoma",
+        "city_vietnamese": "Seattle",
+        "city_english": "Seattle"
+      },
+      {
+        "code": "FCO",
+        "english_name": "Leonardo da Vinci–Fiumicino Airport",
+        "vietnamese_name": "Sân bay quốc tế Fiumicino Leonardo da Vinci",
+        "city_vietnamese": "Rome",
+        "city_english": "Rome"
+      },
+      {
+        "code": "MUC",
+        "english_name": "Munich Airport",
+        "vietnamese_name": "Sân bay Munich",
+        "city_vietnamese": "Munich",
+        "city_english": "Munich"
+      },
+      {
+        "code": "AMS",
+        "english_name": "Amsterdam Airport Schiphol",
+        "vietnamese_name": "Sân bay quốc tế Schiphol Amsterdam",
+        "city_vietnamese": "Amsterdam",
+        "city_english": "Amsterdam"
+      },
+      {
+        "code": "ZRH",
+        "english_name": "Zurich Airport",
+        "vietnamese_name": "Sân bay Zurich",
+        "city_vietnamese": "Zurich",
+        "city_english": "Zurich"
+      },
+      {
+        "code": "MAD",
+        "english_name": "Adolfo Suárez Madrid–Barajas Airport",
+        "vietnamese_name": "Sân bay quốc tế Madrid Barajas",
+        "city_vietnamese": "Madrid",
+        "city_english": "Madrid"
+      },
+      {
+        "code": "CPH",
+        "english_name": "Copenhagen Airport",
+        "vietnamese_name": "Sân bay quốc tế Copenhagen",
+        "city_vietnamese": "Copenhagen",
+        "city_english": "Copenhagen"
+      }
+    ]
+  }
+  
