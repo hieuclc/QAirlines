@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import FlightCard from '@/components/FlightCard.vue';
 import Header from '@/components/Header.vue';
 
@@ -26,20 +27,26 @@ const flights = ref([]);
 const searchDeparture = ref('');
 const searchArrival = ref('');
 const searchPassengers = ref('');
+const searchPersonalId = ref('');
+const searchFullName = ref('');
 
 const resetSearchValues = () => {
     searchDeparture.value = '';
     searchArrival.value = '';
     searchDate.value = '';
     searchPassengers.value = '';
+    searchPersonalId.value = '';
+    searchFullName.value = '';
 };
 
 const filteredFlights = computed(() => {
     const queryDeparture = searchDeparture.value.trim().toLowerCase();
     const queryArrival = searchArrival.value.trim().toLowerCase();
     const queryDate = searchDate.value.trim().toLowerCase();
+    const queryPersonalId = searchPersonalId.value.trim().toLowerCase();
+    const queryFullName = searchFullName.value.trim().toLowerCase();
 
-    if (!queryDeparture && !queryArrival && !queryDate) {
+    if (!queryDeparture && !queryArrival && !queryDate && !queryPersonalId && !queryFullName) {
         return flights.value.slice(0, 5);
     }
 
@@ -47,7 +54,9 @@ const filteredFlights = computed(() => {
         const matchDeparture = !queryDeparture || flight.departureLocation.toLowerCase().startsWith(queryDeparture);
         const matchArrival = !queryArrival || flight.arrivalLocation.toLowerCase().startsWith(queryArrival);
         const matchDate = !queryDate || flight.departureDate.toLowerCase().includes(queryDate);
-        return matchDeparture && matchArrival && matchDate;
+        const matchPersonalId = !queryPersonalId || flight.personalId.toLowerCase().includes(queryPersonalId);
+        const matchFullName = !queryFullName || flight.fullName.toLowerCase().includes(queryFullName);
+        return matchDeparture && matchArrival && matchDate && matchPersonalId && matchFullName;
     }).slice(0, 5);
 });
 
@@ -75,8 +84,20 @@ const fetchFlights = async (menu) => {
     }
 };
 
+const route = useRoute();
+
 onMounted(() => {
     fetchFlights('flightSearch');
+    if (route.query.personalId) {
+        searchPersonalId.value = route.query.personalId;
+    }
+    if (route.query.fullName) {
+        searchFullName.value = route.query.fullName;
+    }
+    if (route.query.view === 'myFlights') {
+        dashboardMenu.value.myFlights = true;
+        dashboardMenu.value.flightSearch = false;
+    }
 });
 </script>
 
@@ -153,26 +174,18 @@ onMounted(() => {
                     <div>
                         <label class="text-lg">Chuyến bay của tôi</label>
                     </div>
-                    <div class="inline-flex flex-wrap my-4">
-                        <div class="flex flex-col flex-wrap m-4">
-                            <label>Từ</label>
-                            <input v-model="searchDeparture" type="text" class="px-4 py-2 border border-slate-400 rounded" placeholder="Điểm khởi hành">
+                    <div class="inline-flex flex-wrap my-4 w-full items-end">
+                        <div class="flex flex-col flex-wrap m-4 flex-1">
+                            <label>Số Căn cước công dân/Hộ chiếu</label>
+                            <input v-model="searchPersonalId" type="text" class="px-4 py-2 border border-slate-400 rounded w-full" placeholder="CCCD/Hộ chiếu">
                         </div>
-                        <div class="flex flex-col flex-wrap m-4">
-                            <label>Đến</label>
-                            <input v-model="searchArrival" type="text" class="px-4 py-2 border border-slate-400 rounded" placeholder="Điểm đến">
+                        <div class="flex flex-col flex-wrap m-4 flex-1">
+                            <label>Họ và tên</label>
+                            <input v-model="searchFullName" type="text" class="px-4 py-2 border border-slate-400 rounded w-full" placeholder="Họ và tên">
                         </div>
-                        <div class="flex flex-col flex-wrap m-4">
-                            <label>Ngày khởi hành</label>
-                            <input v-model="searchDate" type="date" class="px-4 py-2 border border-slate-400 rounded" :min="today" :max="maxDate" placeholder="">
+                        <div class="flex flex-col flex-wrap m-4 ml-auto">
+                            <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Tìm kiếm</button>
                         </div>
-                        <div class="flex flex-col flex-wrap m-4">
-                            <label>Số hành khách</label>
-                            <input v-model="searchPassengers" type="text" class="px-4 py-2 border border-slate-400 rounded" placeholder="0 hành khách">
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-end">
-                        <button class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Tìm kiếm</button>
                     </div>
                     <div v-if="filteredFlights.length > 0">
                         <div class="flex flex-col" v-for="(flight, index) in filteredFlights" :key="index">

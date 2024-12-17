@@ -97,6 +97,7 @@ const showBookingInfo = ref(false);
 const showFlights = ref(true);
 const showSeatPicking = ref(false);
 const showCustomerForm = ref(false);
+const showConfirmation = ref(false);
 
 const toggleBookingInfo = () => {
     showBookingInfo.value = !showBookingInfo.value;
@@ -223,6 +224,8 @@ const handleTicketSelected = ({ flightId, ticketType }) => {
         if (!selectedFlights.value.departure) {
             selectedFlights.value.departure = selectedFlight;
             alert('Hãy chọn vé chiều về');
+            // Automatically switch to the return date selection
+            searchDate.value = searchReturnDate.value;
         } else {
             selectedFlights.value.return = selectedFlight;
             showFlights.value = false;
@@ -269,16 +272,21 @@ const submitBooking = () => {
     console.log('Customer Info:', customerInfo.value);
     console.log('Selected Flights:', selectedFlights.value);
     console.log('Selected Seats:', selectedSeats.value);
-    // Handle booking submission logic here
+    showCustomerForm.value = false;
+    showConfirmation.value = true;
 };
 
 const goBackToFlightPicking = () => {
     showCustomerForm.value = false;
     showSeatPicking.value = false;
     showFlights.value = true;
+    showConfirmation.value = false;
     selectedFlights.value.departure = null;
     selectedFlights.value.return = null;
     rows.value.forEach(row => row.forEach(seat => seat.selected = false));
+    if (tripType.value === 'round-trip') {
+        searchDate.value = route.query.date || today.value;
+    }
 };
 
 const goBackToSeatPicking = () => {
@@ -305,6 +313,7 @@ const currentSelection = computed(() => {
 const customerInfo = ref({
     name: '',
     email: '',
+    id: '',
     phone: ''
 });
 
@@ -537,7 +546,7 @@ watch(tripType, (newType) => {
         </div>
         <div class="flex flex-col mb-4">
             <label class="mb-2">Số căn cước công dân/Hộ chiếu</label>
-            <input v-model="customerInfo.phone" type="text" class="px-4 py-2 border border-slate-400 rounded" placeholder="Số CCCD/Hộ chiếu">
+            <input v-model="customerInfo.id" type="text" class="px-4 py-2 border border-slate-400 rounded" placeholder="Số CCCD/Hộ chiếu">
         </div>
         <div class="flex flex-col mb-4">
             <label class="mb-2">Email</label>
@@ -564,6 +573,32 @@ watch(tripType, (newType) => {
         <div class="flex justify-between">
             <button @click="goBackToSeatPicking" class="px-4 py-2 bg-gray-600 text-white rounded">Quay lại chọn ghế</button>
             <button @click="submitBooking" class="px-4 py-2 bg-blue-600 text-white rounded">Đặt vé</button>
+        </div>
+    </div>
+
+    <div v-if="showConfirmation" class="container flex flex-col p-4">
+        <h2 class="text-2xl font-bold mb-4">Xác nhận đặt vé</h2>
+        <div class="flex flex-col mb-4">
+            <h3 class="text-xl font-bold mb-2">Thông tin khách hàng</h3>
+            <p><strong>Tên:</strong> {{ customerInfo.name }}</p>
+            <p><strong>Số căn cước công dân/Hộ chiếu:</strong> {{ customerInfo.id }}</p>
+            <p><strong>Email:</strong> {{ customerInfo.email }}</p>
+            <p><strong>Số điện thoại:</strong> {{ customerInfo.phone }}</p>
+        </div>
+        <div class="flex flex-col mb-4">
+            <h3 class="text-xl font-bold mb-2">Thông tin chuyến bay</h3>
+            <div v-if="selectedFlights.departure" class="flex justify-between items-center mb-2">
+                <span>Chiều đi: {{ selectedFlights.departure.departureLocation }} tới {{ selectedFlights.departure.arrivalLocation }} vào {{ selectedFlights.departure.departureDate }}</span>
+            </div>
+            <div v-if="selectedFlights.return" class="flex justify-between items-center mb-2">
+                <span>Chiều về: {{ selectedFlights.return.departureLocation }} tới {{ selectedFlights.return.arrivalLocation }} vào {{ selectedFlights.return.departureDate }}</span>
+            </div>
+            <div v-if="selectedSeats.length > 0" class="flex justify-between items-center mb-2">
+                <span>Các ghế đã chọn: {{ selectedSeats.map(seat => seat.label).join(', ') }}</span>
+            </div>
+        </div>
+        <div class="flex justify-end">
+            <button @click="goBackToFlightPicking" class="px-4 py-2 bg-gray-600 text-white rounded">Quay lại</button>
         </div>
     </div>
 

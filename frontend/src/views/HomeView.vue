@@ -28,6 +28,8 @@
     const searchDate = ref('');
     const searchReturnDate = ref('');
     const searchPassengers = ref('1');
+    const searchPersonalId = ref('');
+    const searchFullName = ref('');
 
     const searchFlights = () => {
         const query = {
@@ -39,6 +41,15 @@
             travelType: travelType.value
         };
         router.push({ name: 'booking', query });
+    };
+
+    const searchMyFlights = () => {
+        const query = {
+            personalId: searchPersonalId.value,
+            fullName: searchFullName.value,
+            view: 'myFlights'
+        };
+        router.push({ name: 'dashboard', query });
     };
 
     function searchClicked(item) {
@@ -74,7 +85,7 @@
     }
 
     function flightInfoToggle(value) {
-        if (value === 'location') {
+        if (value === 'id') {
             flightInfoLocation.value = true;
         }
         else {
@@ -166,10 +177,10 @@
     <div class="bg-[url('../assets/images/test.webp')] bg-cover bg-center bg-fixed grid grid-cols-12 min-h-144">
            
         <div class=" col-start-3 col-end-7 mt-12 mb-auto bg-slate-300 rounded-md flex flex-col">
-            <div class="grid grid-cols-3 gap-0">
+            <div class="grid grid-cols-2 gap-0">
                 <button @click="searchClicked('book')" class="py-4 hover:bg-slate-100 rounded-md duration-300">Đặt vé</button>
                 <button @click="searchClicked('flightInfo')" class="py-4 hover:bg-slate-100 rounded-md duration-300">Theo dõi chuyến bay</button>
-                <button @click="searchClicked('checkIn')" class="py-4 hover:bg-slate-100 rounded-md duration-300">Check in</button>
+                <!-- <button @click="searchClicked('checkIn')" class="py-4 hover:bg-slate-100 rounded-md duration-300">Check in</button> -->
             </div>
             <div class="searchContents flex flex-col">
                 <div class="bookContents flex flex-col " v-if="toggledSearch.book">
@@ -220,19 +231,19 @@
                     <div class="px-10 py-2 w-full flex flex-row items-center gap-20">
                         <div class="w-[60%] grid grid-cols-2 gap-2 ml-2">
                             
-                            <button class="px-1 py-1 hover:bg-slate-200 focus:bg-blue-500 focus:text-white focus:duration-500 rounded-md hover:duration-300" @click="flightInfoToggle('location')">Theo địa điểm</button>
+                            <button class="px-1 py-1 hover:bg-slate-200 focus:bg-blue-500 focus:text-white focus:duration-500 rounded-md hover:duration-300" @click="flightInfoToggle('id')">Theo thông tin cá nhân</button>
                             <button class="px-1 py-1 hover:bg-slate-200 focus:bg-blue-500 focus:text-white focus:duration-500 rounded-md hover:duration-300" @click="flightInfoToggle('index')">Theo mã chuyến bay</button>
                         </div>
                     </div>
                     <div>
                         <div v-if="flightInfoLocation" class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
                             <div class="flex flex-1 flex-col">
-                                <label class="move-label py-0.5">Từ</label>
-                                <input class="input py-1.5 rounded-lg px-2" type="text" placeholder="Điểm khởi hành">
+                                <label class="move-label py-0.5">Số CCCD/Hộ chiếu</label>
+                                <input v-model="searchPersonalId" class="input py-1.5 rounded-lg px-2" type="text" placeholder="Số CCCD/Hộ chiếu">
                             </div>
                             <div class="flex flex-1 flex-col">
-                                <label class="move-label py-0.5">Đến</label>
-                                <input class="input py-1.5 rounded-lg px-2" type="text" placeholder="Điểm đến">
+                                <label class="move-label py-0.5">Họ và Tên</label>
+                                <input v-model="searchFullName" class="input py-1.5 rounded-lg px-2" type="text" placeholder="Họ và tên">
                             </div>
                         </div>
                         <div v-else class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
@@ -246,24 +257,14 @@
                             </div>
                         </div>
                         <div class="px-10 py-2 w-full grid grid-cols-4 items-center">
-                            <button class=" col-start-4 col-end-5 px-2 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md duration-300">Tìm kiếm</button>                
+                            <button @click="searchMyFlights" class=" col-start-4 col-end-5 px-2 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md duration-300">Tìm kiếm</button>                
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="checkInContents flex flex-col" v-if="toggledSearch.checkIn">
-                <div class="px-10 py-2 w-full flex flex-row items-center gap-20">
-                        <!-- <div class="w-[40%] grid grid-cols-2 gap-2 ml-2">
-                            <button class="px-1 py-1 hover:bg-slate-200 rounded-md duration-300">Mã đặt chỗ</button>
-                        </div> -->
-                    </div>
-                <div class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
-                    <div class="flex flex-1 flex-col ">
-                        <label class="move-label py-0.5">Mã đặt chỗ</label>
-                        <input class="input py-1.5 rounded-lg px-2" type="text" placeholder="Mã đặt chỗ">
-                    </div>
-                </div>
+            <!-- <div class="checkInContents flex flex-col" v-if="toggledSearch.checkIn">
+                
 
                 <div class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
                     <div class="flex flex-1 flex-col">
@@ -277,10 +278,19 @@
                         <input class="input py-1.5 rounded-lg px-2" type="text" placeholder="Tên đệm và tên">
                     </div>
                 </div>
+
+                
+                <div class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
+                    <div class="flex flex-1 flex-col ">
+                        <label class="move-label py-0.5">Mã đặt chỗ</label>
+                        <input class="input py-1.5 rounded-lg px-2" type="text" placeholder="Mã đặt chỗ">
+                    </div>
+                </div>
+                
                 <div class="px-10 py-2 w-full grid grid-cols-4 items-center">
                     <button class=" col-start-4 col-end-5 px-2 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md duration-300">Tìm kiếm</button>                
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
