@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Booking from '../views/Booking.vue'
+import Admin from '../views/AdminDashboard.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/booking',
       name: 'booking',
       component: Booking
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: Admin
     },
     
   ]
