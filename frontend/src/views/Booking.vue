@@ -132,14 +132,6 @@ const getAirportCode = (query) => {
     return result.code;
 };
 
-const departureAirports = computed(() => {
-    return airports.value.filter(airport => airport.city_vietnamese !== searchArrival.value);
-});
-
-const arrivalAirports = computed(() => {
-    return airports.value.filter(airport => airport.city_vietnamese !== searchDeparture.value);
-});
-
 const filteredFlights = computed(() => {
     const queryDeparture = getAirportCode(searchDeparture.value);
     const queryArrival = getAirportCode(searchArrival.value);
