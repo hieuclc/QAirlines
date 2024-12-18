@@ -1,6 +1,7 @@
 <script setup>
 import Header from '@/components/Header.vue';
 import FlightCard from '@/components/FlightCard.vue';
+import AutoComplete from '@/components/AutoComplete.vue';
 import { ref, onMounted, computed, watch } from 'vue';
 import airportMapping from './airportMapping.json';
 import { useRouter, useRoute } from 'vue-router';
@@ -116,7 +117,7 @@ const fetchFlights = async () => {
 
 const getAirportCode = (query) => {
     if (!query) return null;
-    
+    query = query.trim();
     const result = airports.value.find(airport =>
         airport.english_name.toLowerCase().includes(query.toLowerCase()) ||
         airport.vietnamese_name.toLowerCase().includes(query.toLowerCase()) ||
@@ -376,19 +377,11 @@ watch(tripType, (newType) => {
         <div v-if="showModify" class="flex flex-row items-end justify-center">
             <div class="flex flex-col flex-wrap m-4">
                 <label>Từ</label>
-                <select v-model="searchDeparture" class="px-4 py-2 border border-slate-400 rounded">
-                    <option v-for="airport in departureAirports" :key="airport.code" :value="airport.city_vietnamese">
-                        {{ airport.city_vietnamese }} ({{ airport.code }})
-                    </option>
-                </select>
+                <AutoComplete inputClass="px-4 py-2 border border-slate-400 rounded" :source="airports" v-model="searchDeparture"></AutoComplete>
             </div>
             <div class="flex flex-col flex-wrap m-4">
                 <label>Đến</label>
-                <select v-model="searchArrival" class="px-4 py-2 border border-slate-400 rounded">
-                    <option v-for="airport in arrivalAirports" :key="airport.code" :value="airport.city_vietnamese">
-                        {{ airport.city_vietnamese }} ({{ airport.code }})
-                    </option>
-                </select>
+                <AutoComplete inputClass="px-4 py-2 border border-slate-400 rounded" :source="airports" v-model="searchArrival"></AutoComplete>
             </div>
             <div class="flex flex-col flex-wrap m-4">
                 <label>Ngày khởi hành</label>

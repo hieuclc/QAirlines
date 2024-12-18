@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Booking from '../views/Booking.vue'
 import Admin from '../views/AdminDashboard.vue'
+import test from '@/views/test.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,11 @@ const router = createRouter({
       name: 'admin',
       component: Admin
     },
+    {
+      path: '/test',
+      name: 'test',
+      component: test
+    }
     
   ]
 })
