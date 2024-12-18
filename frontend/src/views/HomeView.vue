@@ -1,6 +1,11 @@
 <script setup>
     import { ref, onMounted, onBeforeUnmount } from 'vue'
     import { useRouter } from 'vue-router';
+    import AutoComplete from '@/components/AutoComplete.vue';
+    import airportMapping from './airportMapping.json';
+
+    const airports = ref(airportMapping.airports);
+
 
     const toggledMenu = ref({
         book: false,
@@ -193,11 +198,13 @@
                     <div class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
                         <div class="location flex flex-1 flex-col">
                             <label class="move-label py-0.5">Từ</label>
-                            <input v-model="searchDeparture" class="input py-1.5 rounded-lg px-2" type="text" placeholder="Điểm khởi hành">
+                            <AutoComplete v-model="searchDeparture" :source="airports" inputClass="py-1.5 rounded-lg px-2" placeholder="Điểm khởi hành"></AutoComplete>
+                            <!-- <input v-model="searchDeparture" class="input py-1.5 rounded-lg px-2" type="text" placeholder="Điểm khởi hành"> -->
                         </div>
                         <div class="location flex flex-1 flex-col">
                             <label class="move-label py-0.5">Đến</label>
-                            <input v-model="searchArrival" class="input py-1.5 rounded-lg px-2" type="text" placeholder="Điểm đến">
+                            <AutoComplete v-model="searchArrival" :source="airports" inputClass="py-1.5 rounded-lg px-2" placeholder="Điểm đến"></AutoComplete>
+                            <!-- <input v-model="searchArrival" class="input py-1.5 rounded-lg px-2" type="text" placeholder="Điểm đến"> -->
                         </div>
                     </div>
                     <div class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
