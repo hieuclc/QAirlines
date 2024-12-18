@@ -1,12 +1,12 @@
 {
     "airports": [
-    {
+      {
         "code": "",
         "english_name": "",
         "vietnamese_name": "",
         "city_vietnamese": "",
         "city_english": ""
-        },
+      },
       {
         "code": "SGN",
         "english_name": "Tan Son Nhat International Airport",

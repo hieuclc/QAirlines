@@ -19,7 +19,7 @@
 
     const flightInfoLocation = ref(true);
 
-    const travelType = ref('one-way');
+    const tripType = ref('one-way');
 
     const router = useRouter();
 
@@ -36,9 +36,9 @@
             departure: searchDeparture.value,
             arrival: searchArrival.value,
             date: searchDate.value,
-            returnDate: travelType.value === 'round-trip' ? searchReturnDate.value : '',
+            returnDate: tripType.value === 'round-trip' ? searchReturnDate.value : '',
             passengers: searchPassengers.value,
-            travelType: travelType.value
+            tripType: tripType.value
         };
         router.push({ name: 'booking', query });
     };
@@ -93,8 +93,8 @@
         }
     }
 
-    function travelTypeClicked(value) {
-        travelType.value = value;
+    function tripTypeClicked(value) {
+        tripType.value = value;
     }
 
     onMounted(() => {
@@ -186,8 +186,8 @@
                 <div class="bookContents flex flex-col " v-if="toggledSearch.book">
                     <div class="px-10 py-2 w-full flex flex-row items-center gap-20">
                         <div class="grid grid-cols-2 gap-2 ml-2">
-                            <button @click="travelTypeClicked('one-way')" :class="['px-2 py-1 rounded-md hover:duration-300 focus:duration-500 transition-colors', travelType === 'one-way' ? 'bg-blue-500' : 'hover:bg-slate-200 text-gray-800']">Một chiều</button>
-                            <button @click="travelTypeClicked('round-trip')" :class="['px-2 py-1 rounded-md hover:duration-300 focus:duration-500 transition-colors', travelType === 'round-trip' ? 'bg-blue-500' : 'hover:bg-slate-200 text-gray-800']">Khứ hồi</button>
+                            <button @click="tripTypeClicked('one-way')" :class="['px-2 py-1 rounded-md hover:duration-300 focus:duration-500 transition-colors', tripType === 'one-way' ? 'bg-blue-500' : 'hover:bg-slate-200 text-gray-800']">Một chiều</button>
+                            <button @click="tripTypeClicked('round-trip')" :class="['px-2 py-1 rounded-md hover:duration-300 focus:duration-500 transition-colors', tripType === 'round-trip' ? 'bg-blue-500' : 'hover:bg-slate-200 text-gray-800']">Khứ hồi</button>
                         </div>
                     </div>
                     <div class="px-10 py-2 w-full flex flex-wrap flex-row items-center gap-5">
@@ -205,7 +205,7 @@
                             <label class="move-label py-0.5">Ngày đi</label>
                             <input v-model="searchDate" class="date py-1.5 rounded-lg px-2" type="date">
                         </div>
-                        <div class="flex flex-1 flex-col" v-if="travelType === 'round-trip'">
+                        <div class="flex flex-1 flex-col" v-if="tripType === 'round-trip'">
                             <label class="move-label py-0.5">Ngày đến</label>
                             <input v-model="searchReturnDate" class="date py-1.5 rounded-lg px-2" type="date">
                         </div>

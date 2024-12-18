@@ -22,7 +22,10 @@ const searchArrival = ref(route.query.arrival || 'TP Hồ Chí Minh');
 const searchDate = ref(route.query.date || today.value);
 const searchReturnDate = ref(route.query.returnDate || '');
 const searchPassengers = ref(route.query.passengers || '1');
-const tripType = ref(route.query.travelType || 'one-way');
+const tripType = ref(route.query.tripType || 'one-way');
+
+const newSearchDeparture = ref(searchDeparture.value);
+const newSearchArrival = ref(searchArrival.value);
 
 const firstDay = (currentDate, firstDayOfWeek) => {
     const date = new Date(currentDate);
@@ -30,6 +33,23 @@ const firstDay = (currentDate, firstDayOfWeek) => {
     const diff = (day < firstDayOfWeek ? 7 : 0) + day - firstDayOfWeek;
     date.setDate(date.getDate() - diff);
     return date;
+};
+
+const getAirportCode = (query) => {
+    if (!query) return null;
+    query = query.trim();
+    const result = airports.value.find(airport =>
+        airport.english_name.toLowerCase().includes(query.toLowerCase()) ||
+        airport.vietnamese_name.toLowerCase().includes(query.toLowerCase()) ||
+        airport.city_english.toLowerCase().includes(query.toLowerCase()) ||
+        airport.city_vietnamese.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (!result) {
+        return 'null';
+    }
+
+    return result.code;
 };
 
 const visibleDates = (date) => computed(() => {
@@ -115,22 +135,6 @@ const fetchFlights = async () => {
     }
 };
 
-const getAirportCode = (query) => {
-    if (!query) return null;
-    query = query.trim();
-    const result = airports.value.find(airport =>
-        airport.english_name.toLowerCase().includes(query.toLowerCase()) ||
-        airport.vietnamese_name.toLowerCase().includes(query.toLowerCase()) ||
-        airport.city_english.toLowerCase().includes(query.toLowerCase()) ||
-        airport.city_vietnamese.toLowerCase().includes(query.toLowerCase())
-    );
-
-    if (!result) {
-        return null;
-    }
-
-    return result.code;
-};
 
 const filteredFlights = computed(() => {
     const queryDeparture = getAirportCode(searchDeparture.value);
@@ -141,7 +145,7 @@ const filteredFlights = computed(() => {
                (!queryArrival || flight.arrivalLocation.toLowerCase().startsWith(queryArrival.toLowerCase())) &&
                flight.departureDate === searchDate.value;
     });
-
+    
     if (departureTimeRange.value !== 'all') {
         const [startHour, endHour] = departureTimeRange.value.split('-').map(Number);
         filtered = filtered.filter(flight => {
@@ -205,6 +209,17 @@ const formattedDateRange = (startDate, endDate = null) => {
 
 const applyFilters = () => {
     // showModify.value = false;
+    const query = {
+        departure: newSearchDeparture.value,
+        arrival: newSearchArrival.value,
+        date: searchDate.value,
+        returnDate: tripType.value === 'round-trip' ? searchReturnDate.value : '',
+        passengers: searchPassengers.value,
+        tripType: tripType.value
+    };
+
+    
+    router.push({ name: 'booking', query });
 };
 
 const handleTicketSelected = ({ flightId, ticketType }) => {
@@ -336,7 +351,7 @@ watch(route, (newRoute) => {
     searchDate.value = newRoute.query.date || today.value;
     searchReturnDate.value = newRoute.query.returnDate || '';
     searchPassengers.value = newRoute.query.passengers || '1';
-    tripType.value = newRoute.query.travelType || 'one-way';
+    tripType.value = newRoute.query.tripType || 'one-way';
 });
 
 watch(tripType, (newType) => {
@@ -369,11 +384,11 @@ watch(tripType, (newType) => {
         <div v-if="showModify" class="flex flex-row items-end justify-center">
             <div class="flex flex-col flex-wrap m-4">
                 <label>Từ</label>
-                <AutoComplete inputClass="px-4 py-2 border border-slate-400 rounded" :source="airports" v-model="searchDeparture"></AutoComplete>
+                <AutoComplete inputClass="px-4 py-2 border border-slate-400 rounded" :source="airports" v-model="newSearchDeparture"></AutoComplete>
             </div>
             <div class="flex flex-col flex-wrap m-4">
                 <label>Đến</label>
-                <AutoComplete inputClass="px-4 py-2 border border-slate-400 rounded" :source="airports" v-model="searchArrival"></AutoComplete>
+                <AutoComplete inputClass="px-4 py-2 border border-slate-400 rounded" :source="airports" v-model="newSearchArrival"></AutoComplete>
             </div>
             <div class="flex flex-col flex-wrap m-4">
                 <label>Ngày khởi hành</label>

@@ -1,14 +1,14 @@
 <template>
-    <div class="w-full relative">
-        <input type="text" :value="modelValue" @input="handleInput" :class="['px-2 py-2 w-full border border-gray-300 rounded-md', inputClass]">
+    <div class="w-full relative" ref="autocomplete" @click.outside="handleClickOutside">
+        <input type="text" :value="modelValue" @input="handleInput" @focus="handleFocus" :class="['px-2 py-2 w-full border border-gray-300 rounded-md', inputClass]">
         <ul class="mt-1 w-full max-h-60 border border-gray-300 rounded-md bg-white absolute overflow-y-auto" v-show="searchResults.length && isOpen">
-            <li v-for="result in searchResults" :key="result.code" :value="result.city_vietnamese" @click="setSelected(result)" class="px-4 py-3 border-b border-gray-200 text-stone-600 cursor-pointer hover:bg-gray-100 transition-colors">{{ result.city_vietnamese }} ({{ result.code }})</li>
+            <li v-for="result in searchResults" :key="result.code" :value="result.city_vietnamese" @click="setSelected(result)" class="px-4 py-3 border-b border-gray-200 text-stone-600 cursor-pointer hover:bg-gray-100 ">{{ result.city_vietnamese }} ({{ result.code }})</li>
         </ul>
     </div>
 </template>
 
 <script setup>
-    import { ref, defineProps, defineEmits, computed } from 'vue';
+    import { ref, defineProps, defineEmits, computed, onMounted, onBeforeUnmount } from 'vue';
     const props = defineProps({
         source: {
             type: Array,
@@ -19,13 +19,11 @@
         inputClass: String,
     });
     const search = ref('');
+    const isOpen = ref(false);
     const searchResults = computed(() => {
         if (search.value === '') {
             return [];
         }
-        // console.log(props.source.filter(
-        //     (airport) => airport.city_vietnamese.toLowerCase().includes(search.value.trim().toLowerCase())
-        // ).length);
         return props.source.filter(
             (airport) => airport.city_vietnamese.toLowerCase().includes(search.value.trim().toLowerCase())
         )
@@ -46,8 +44,26 @@
         console.log(search.value);
     };
 
-    const isOpen = ref(false);
+    const handleFocus = () => {
+        isOpen.value = true;
+        search.value = ' ';
+    };
 
     
-</script>
 
+    const autocomplete = ref(null);
+
+    const handleClickOutside = (event) => {
+        if (autocomplete.value && !autocomplete.value.contains(event.target)) {
+            isOpen.value = false;
+        }
+    };
+
+    onMounted(() => {
+        document.addEventListener('click', handleClickOutside);
+    });
+
+    onBeforeUnmount(() => {
+        document.removeEventListener('click', handleClickOutside);
+    });
+</script>
