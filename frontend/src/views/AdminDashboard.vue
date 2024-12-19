@@ -1,6 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import Header from '@/components/Header.vue';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
+
 
 const flights = ref([]);
 const newFlight = ref({
@@ -84,8 +88,128 @@ const currentView = ref('viewFlights');
 
 const isEditing = computed(() => editingFlight.value !== null);
 
+const bookings = ref([]); // Add a ref to store bookings data
+
+const fetchBookings = async () => {
+    try {
+        const data = await import('./bookings.json').catch(() => ({ bookings: [] }));
+        bookings.value = data.bookings;
+    } catch (error) {
+        console.error('Error loading bookings data:', error);
+        bookings.value = [];
+    }
+};
+
+const getBookingCount = (flightNumber, bookingsList) => {
+    return bookingsList.filter(booking => booking.flightNumber === flightNumber).length;
+};
+
+const getTotalRevenue = (flightNumber, bookingsList) => {
+    return bookingsList
+        .filter(booking => booking.flightNumber === flightNumber)
+        .reduce((total, booking) => total + booking.ticketPrice, 0);
+};
+
+const today = ref(new Date().toISOString().split('T')[0]);
+
+
+const chartFlightNumber = ref('');
+const chartStartDate = ref(today.value);
+const chartEndDate = ref(today.value);
+
+const filteredBookings = computed(() => {
+    console.log(bookings.value.filter(booking => 
+        (!chartFlightNumber.value || booking.flightNumber.toLowerCase().includes(chartFlightNumber.value.toLowerCase())) &&
+        (!chartStartDate.value || new Date(booking.bookingDate) >= new Date(chartStartDate.value)) &&
+        (!chartEndDate.value || new Date(booking.bookingDate) <= new Date(chartEndDate.value))
+    ));
+    return bookings.value.filter(booking => 
+        (!chartFlightNumber.value || booking.flightNumber.toLowerCase().includes(chartFlightNumber.value.toLowerCase())) &&
+        (!chartStartDate.value || new Date(booking.bookingDate) >= new Date(chartStartDate.value)) &&
+        (!chartEndDate.value || new Date(booking.bookingDate) <= new Date(chartEndDate.value))
+    );
+});
+
+let chartInstance = null;
+
+const drawChart = () => {
+    const canvas = document.getElementById('bookingsChart');
+    if (!canvas) return; // Ensure the canvas element exists
+    const ctx = canvas.getContext('2d');
+
+    if (chartInstance) {
+        chartInstance.destroy(); // Destroy the existing chart instance
+    }
+
+    const flightNumbers = [...new Set(filteredBookings.value.map(booking => booking.flightNumber))];
+    const bookingCounts = flightNumbers.map(flightNumber => getBookingCount(flightNumber, filteredBookings.value));
+    const totalRevenues = flightNumbers.map(flightNumber => getTotalRevenue(flightNumber, filteredBookings.value));
+    console.log(flightNumbers, bookingCounts, totalRevenues);
+    chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: flightNumbers,
+            datasets: [
+                {
+                    label: 'Số hành khách',
+                    data: bookingCounts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    barThickness: 20,
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.5
+                },
+                {
+                    label: 'Doanh thu (VND)',
+                    data: totalRevenues,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    type: 'line',
+                    yAxisID: 'y1',
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Số hành khách'
+                    },
+                    grace: '5%'
+                },
+                y1: {
+                    beginAtZero: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Doanh thu (VND)'
+                    },
+                    grace: '5%'
+                }
+            }
+        }
+    });
+};
+
+const applyChartFilters = () => {
+    drawChart();
+};
+
 onMounted(() => {
     fetchFlights();
+    fetchBookings();
+});
+
+watch([flights, bookings, currentView], () => {
+    if (flights.value.length && bookings.value.length && currentView.value === 'viewBookings') {
+        setTimeout(drawChart, 0);
+    }
 });
 </script>
 
@@ -96,6 +220,7 @@ onMounted(() => {
         <div class="flex justify-center space-x-4 mb-8">
             <button @click="currentView = 'viewFlights'" :class="{'bg-blue-500 text-white': currentView === 'viewFlights', 'bg-gray-200': currentView !== 'viewFlights'}" class="px-4 py-2 rounded">Xem chuyến bay</button>
             <button @click="currentView = 'addFlight'" :class="{'bg-blue-500 text-white': currentView === 'addFlight', 'bg-gray-200': currentView !== 'addFlight'}" class="px-4 py-2 rounded">Thêm chuyến bay</button>
+            <button @click="currentView = 'viewBookings'" :class="{'bg-blue-500 text-white': currentView === 'viewBookings', 'bg-gray-200': currentView !== 'viewBookings'}" class="px-4 py-2 rounded">Xem đặt vé</button>
         </div>
 
         <div v-if="currentView === 'viewFlights'" class="bg-white p-6 rounded-lg shadow-lg">
@@ -196,6 +321,27 @@ onMounted(() => {
                 <button @click="addFlight" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Thêm chuyến bay</button>
             </div>
         </div>
+
+        <div v-if="currentView === 'viewBookings'" class="bg-white p-6 rounded-lg shadow-lg mt-8">
+            <h2 class="text-2xl font-bold mb-4">Thống kê đặt vé</h2>
+            <div class="flex flex-wrap gap-4 mb-4">
+                <div class="flex flex-col">
+                    <label for="chartFlightNumber" class="mb-2">Mã chuyến bay</label>
+                    <input id="chartFlightNumber" v-model="chartFlightNumber" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Tìm kiếm theo mã chuyến bay">
+                </div>
+                <div class="flex flex-col">
+                    <label for="chartStartDate" class="mb-2">Ngày bắt đầu</label>
+                    <input id="chartStartDate" v-model="chartStartDate" type="date" class="px-4 py-2 border border-gray-300 rounded">
+                </div>
+                <div class="flex flex-col">
+                    <label for="chartEndDate" class="mb-2">Ngày kết thúc</label>
+                    <input id="chartEndDate" v-model="chartEndDate" type="date" class="px-4 py-2 border border-gray-300 rounded">
+                </div>
+                <button @click="applyChartFilters" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 mt-auto">Áp dụng</button>
+            </div>
+            <canvas id="bookingsChart" width="400" height="200"></canvas>
+        </div>
+
         <transition name="slide">
             <div v-if="isEditing" class="fixed px-2 inset-y-0 top-24 right-0 flex items-center justify-center bg-white w-1/3 p-6 editor-container border border-gray-300 shadow-lg" style="height: calc(100vh - 4rem); overflow-y: auto;">
                 <div class="w-full pt-2 pb-8 px-2 flex flex-col h-full overflow-y-auto">

@@ -1,0 +1,166 @@
+{
+    "bookings": [
+        {
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },{
+            "flightNumber": "VN123",
+            "customerName": "Nguyen Van A",
+            "bookingDate": "2024-12-19",
+            "ticketPrice": 10000000
+        },
+        {
+            "flightNumber": "VN123",
+            "customerName": "Tran Thi B",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 15000000
+        },
+        {
+            "flightNumber": "VN123",
+            "customerName": "Do Van G",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 20000000
+        },
+        {
+            "flightNumber": "VN456",
+            "customerName": "Le Van C",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 12000000
+        },
+        {
+            "flightNumber": "VN456",
+            "customerName": "Hoang Van E",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 13000000
+        },
+        {
+            "flightNumber": "VN456",
+            "customerName": "Nguyen Thi H",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 14000000
+        },
+        {
+            "flightNumber": "VN456",
+            "customerName": "Pham Van I",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 15000000
+        },
+        {
+            "flightNumber": "VN789",
+            "customerName": "Pham Thi D",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 11000000
+        },
+        {
+            "flightNumber": "VN789",
+            "customerName": "Vu Thi F",
+            "bookingDate": "2024-12-20",
+            "ticketPrice": 11500000
+        },
+        {
+            "flightNumber": "VN789",
+            "customerName": "Tran Van J",
+            "bookingDate": "2024-12-12",
+            "ticketPrice": 12000000
+        },
+        {
+            "flightNumber": "VN789",
+            "customerName": "Le Thi K",
+            "bookingDate": "2024-12-11",
+            "ticketPrice": 12500000
+        },
+        {
+            "flightNumber": "VN789",
+            "customerName": "Nguyen Van L",
+            "bookingDate": "2024-12-12",
+            "ticketPrice": 13000000
+        }
+    ]
+}
