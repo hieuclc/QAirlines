@@ -1,0 +1,14 @@
+{
+    "news": [
+        {
+            "title": "New Route Announcement",
+            "content": "We are excited to announce a new route from New York to Tokyo starting next month.",
+            "date": "2023-10-01"
+        },
+        {
+            "title": "Holiday Discounts",
+            "content": "Enjoy up to 20% off on all flights booked during the holiday season.",
+            "date": "2023-12-15"
+        }
+    ]
+}

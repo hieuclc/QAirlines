@@ -2,9 +2,29 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import Header from '@/components/Header.vue';
 import { Chart, registerables } from 'chart.js';
-
+import AutoComplete from '@/components/AutoComplete.vue';
 Chart.register(...registerables);
 
+import airportMapping from './airportMapping.json';
+
+const airports = ref(airportMapping.airports);
+
+const getAirportCode = (query) => {
+    if (!query) return null;
+    query = query.trim();
+    const result = airports.value.find(airport =>
+        airport.english_name.toLowerCase().includes(query.toLowerCase()) ||
+        airport.vietnamese_name.toLowerCase().includes(query.toLowerCase()) ||
+        airport.city_english.toLowerCase().includes(query.toLowerCase()) ||
+        airport.city_vietnamese.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (!result) {
+        return 'null';
+    }
+
+    return result.code;
+};
 
 const flights = ref([]);
 const newFlight = ref({
@@ -25,10 +45,12 @@ const searchDeparture = ref('');
 const searchArrival = ref('');
 
 const filteredFlights = computed(() => {
+    const departureCode = getAirportCode(searchDeparture.value);
+    const arrivalCode = getAirportCode(searchArrival.value);
     return flights.value.filter(flight => 
         (!searchQuery.value || flight.flightNumber.toLowerCase().includes(searchQuery.value.toLowerCase())) &&
-        (!searchDeparture.value || flight.departureLocation.toLowerCase().includes(searchDeparture.value.toLowerCase())) &&
-        (!searchArrival.value || flight.arrivalLocation.toLowerCase().includes(searchArrival.value.toLowerCase()))
+        (!departureCode || flight.departureLocation.toLowerCase().includes(departureCode.toLowerCase())) &&
+        (!arrivalCode || flight.arrivalLocation.toLowerCase().includes(arrivalCode.toLowerCase()))
     );
 });
 
@@ -201,9 +223,78 @@ const applyChartFilters = () => {
     drawChart();
 };
 
+const discounts = ref([]);
+const news = ref([]);
+
+const newDiscount = ref({
+    code: '',
+    description: '',
+    percentage: 0,
+    expiryDate: '',
+    departureLocation: '', // Add departure location
+    arrivalLocation: '' // Add arrival location
+});
+
+const newNews = ref({
+    title: '',
+    content: '',
+    date: ''
+});
+
+const fetchDiscounts = async () => {
+    try {
+        const data = await import('./discounts.json').catch(() => ({ discounts: [] }));
+        discounts.value = data.discounts;
+    } catch (error) {
+        console.error('Error loading discounts data:', error);
+        discounts.value = [];
+    }
+};
+
+const fetchNews = async () => {
+    try {
+        const data = await import('./news.json').catch(() => ({ news: [] }));
+        news.value = data.news;
+    } catch (error) {
+        console.error('Error loading news data:', error);
+        news.value = [];
+    }
+};
+
+const addDiscount = () => {
+    discounts.value.push({ ...newDiscount.value });
+    resetNewDiscount();
+};
+
+const addNews = () => {
+    news.value.push({ ...newNews.value });
+    resetNewNews();
+};
+
+const resetNewDiscount = () => {
+    newDiscount.value = {
+        code: '',
+        description: '',
+        percentage: 0,
+        expiryDate: '',
+        departureLocation: '', // Reset departure location
+        arrivalLocation: '' // Reset arrival location
+    };
+};
+
+const resetNewNews = () => {
+    newNews.value = {
+        title: '',
+        content: '',
+        date: ''
+    };
+};
+
 onMounted(() => {
     fetchFlights();
     fetchBookings();
+    fetchDiscounts();
+    fetchNews();
 });
 
 watch([flights, bookings, currentView], () => {
@@ -221,14 +312,16 @@ watch([flights, bookings, currentView], () => {
             <button @click="currentView = 'viewFlights'" :class="{'bg-blue-500 text-white': currentView === 'viewFlights', 'bg-gray-200': currentView !== 'viewFlights'}" class="px-4 py-2 rounded">Xem chuyến bay</button>
             <button @click="currentView = 'addFlight'" :class="{'bg-blue-500 text-white': currentView === 'addFlight', 'bg-gray-200': currentView !== 'addFlight'}" class="px-4 py-2 rounded">Thêm chuyến bay</button>
             <button @click="currentView = 'viewBookings'" :class="{'bg-blue-500 text-white': currentView === 'viewBookings', 'bg-gray-200': currentView !== 'viewBookings'}" class="px-4 py-2 rounded">Xem đặt vé</button>
+            <button @click="currentView = 'addDiscount'" :class="{'bg-blue-500 text-white': currentView === 'addDiscount', 'bg-gray-200': currentView !== 'addDiscount'}" class="px-4 py-2 rounded">Thêm giảm giá</button>
+            <button @click="currentView = 'addNews'" :class="{'bg-blue-500 text-white': currentView === 'addNews', 'bg-gray-200': currentView !== 'addNews'}" class="px-4 py-2 rounded">Thêm tin tức</button>
         </div>
 
         <div v-if="currentView === 'viewFlights'" class="bg-white p-6 rounded-lg shadow-lg">
             <h2 class="text-2xl font-bold mb-4">Xem chuyến bay</h2>
             <div class="flex flex-wrap gap-4 mb-4">
                 <input v-model="searchQuery" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Tìm kiếm theo mã chuyến bay">
-                <input v-model="searchDeparture" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Tìm kiếm theo địa điểm khởi hành">
-                <input v-model="searchArrival" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Tìm kiếm theo địa điểm đến">
+                <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="searchDeparture" :placeholder="'Điểm khởi hành'"></AutoComplete>
+                <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="searchArrival" :placeholder="'Điểm đến'"></AutoComplete>
             </div>
             <div v-if="filteredFlights.length > 0">
                 <table class="min-w-full bg-white rounded-lg shadow-md">
@@ -285,7 +378,7 @@ watch([flights, bookings, currentView], () => {
                 </div>
                 <div class="flex flex-col">
                     <label>Địa điểm khởi hành</label>
-                    <input v-model="newFlight.departureLocation" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Địa điểm khởi hành">
+                    <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="newFlight.departureLocation" :placeholder="'Địa điểm khởi hành'"></AutoComplete>
                 </div>
                 <div class="flex flex-col">
                     <label>Ngày khởi hành</label>
@@ -294,7 +387,7 @@ watch([flights, bookings, currentView], () => {
                 
                 <div class="flex flex-col">
                     <label>Địa điểm đến</label>
-                    <input v-model="newFlight.arrivalLocation" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Địa điểm đến">
+                    <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="newFlight.arrivalLocation" :placeholder="'Địa điểm đến'"></AutoComplete>
                 </div>
                 <div class="flex flex-col">
                     <label>Ngày đến</label>
@@ -342,6 +435,60 @@ watch([flights, bookings, currentView], () => {
             <canvas id="bookingsChart" width="400" height="200"></canvas>
         </div>
 
+        <div v-if="currentView === 'addDiscount'" class="bg-white p-6 rounded-lg shadow-lg mt-8">
+            <h2 class="text-2xl font-bold mb-4">Thêm giảm giá</h2>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="flex flex-col">
+                    <label>Mã giảm giá</label>
+                    <input v-model="newDiscount.code" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Mã giảm giá">
+                </div>
+                <div class="flex flex-col">
+                    <label>Mô tả</label>
+                    <input v-model="newDiscount.description" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Mô tả">
+                </div>
+                <div class="flex flex-col">
+                    <label>Phần trăm giảm</label>
+                    <input v-model="newDiscount.percentage" type="number" class="px-4 py-2 border border-gray-300 rounded" placeholder="Phần trăm giảm">
+                </div>
+                <div class="flex flex-col">
+                    <label>Ngày hết hạn</label>
+                    <input v-model="newDiscount.expiryDate" type="date" class="px-4 py-2 border border-gray-300 rounded">
+                </div>
+                <div class="flex flex-col">
+                    <label>Địa điểm khởi hành</label>
+                    <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="newDiscount.departureLocation" :placeholder="'Địa điểm khởi hành'"></AutoComplete>
+                </div>
+                <div class="flex flex-col">
+                    <label>Địa điểm đến</label>
+                    <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="newDiscount.arrivalLocation" :placeholder="'Địa điểm đến'"></AutoComplete>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <button @click="addDiscount" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Thêm giảm giá</button>
+            </div>
+        </div>
+
+        <div v-if="currentView === 'addNews'" class="bg-white p-6 rounded-lg shadow-lg mt-8">
+            <h2 class="text-2xl font-bold mb-4">Thêm tin tức</h2>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="flex flex-col">
+                    <label>Tiêu đề</label>
+                    <input v-model="newNews.title" type="text" class="px-4 py-2 border border-gray-300 rounded" placeholder="Tiêu đề">
+                </div>
+                <div class="flex flex-col">
+                    <label>Nội dung</label>
+                    <textarea v-model="newNews.content" class="px-4 py-2 border border-gray-300 rounded" placeholder="Nội dung"></textarea>
+                </div>
+                <div class="flex flex-col">
+                    <label>Ngày</label>
+                    <input v-model="newNews.date" type="date" class="px-4 py-2 border border-gray-300 rounded">
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <button @click="addNews" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Thêm tin tức</button>
+            </div>
+        </div>
+
         <transition name="slide">
             <div v-if="isEditing" class="fixed px-2 inset-y-0 top-24 right-0 flex items-center justify-center bg-white w-1/3 p-6 editor-container border border-gray-300 shadow-lg" style="height: calc(100vh - 4rem); overflow-y: auto;">
                 <div class="w-full pt-2 pb-8 px-2 flex flex-col h-full overflow-y-auto">
@@ -353,7 +500,7 @@ watch([flights, bookings, currentView], () => {
                         </div>
                         <div class="flex flex-col">
                             <label class="mb-2">Địa điểm khởi hành</label>
-                            <input v-model="editingFlight.departureLocation" type="text" class="px-4 py-2 border border-gray-300 rounded">
+                            <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="editingFlight.departureLocation" :placeholder="'Địa điểm khởi hành'"></AutoComplete>
                         </div>
                         <div class="flex flex-col">
                             <label class="mb-2">Ngày khởi hành</label>
@@ -365,7 +512,7 @@ watch([flights, bookings, currentView], () => {
                         </div>
                         <div class="flex flex-col">
                             <label class="mb-2">Địa điểm đến</label>
-                            <input v-model="editingFlight.arrivalLocation" type="text" class="px-4 py-2 border border-gray-300 rounded">
+                            <AutoComplete inputClass="px-4 py-2 border border-gray-300 rounded" :source="airports" v-model="editingFlight.arrivalLocation" :placeholder="'Địa điểm đến'"></AutoComplete>
                         </div>
                         <div class="flex flex-col">
                             <label class="mb-2">Ngày đến</label>

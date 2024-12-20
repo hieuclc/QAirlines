@@ -1,0 +1,18 @@
+[
+    {
+        "code": "DISCOUNT10",
+        "description": "10% off on flights from Hà Nội to TP Hồ Chí Minh",
+        "percentage": 10,
+        "expiryDate": "2023-12-31",
+        "departureLocation": "Hà Nội",
+        "arrivalLocation": "TP Hồ Chí Minh"
+    },
+    {
+        "code": "DISCOUNT20",
+        "description": "20% off on flights from Đà Nẵng to Hà Nội",
+        "percentage": 20,
+        "expiryDate": "2023-12-31",
+        "departureLocation": "Đà Nẵng",
+        "arrivalLocation": "Hà Nội"
+    }
+]
