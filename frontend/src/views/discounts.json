@@ -5,14 +5,16 @@
             "description": "Summer 2021 Discount",
             "percentage": 15,
             "expiryDate": "2021-09-30",
-            "route": "New York - Tokyo"
+            "departureLocation": "HAN",
+            "arrivalLocation": "SGN"
         },
         {
             "code": "WINTER21",
             "description": "Winter 2021 Discount",
             "percentage": 20,
             "expiryDate": "2021-12-31",
-            "route": "Los Angeles - Paris"
+            "departureLocation": "HAN",
+            "arrivalLocation": "SGN"
         }
     ]
 }

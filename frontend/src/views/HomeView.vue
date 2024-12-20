@@ -3,9 +3,12 @@
     import { useRouter } from 'vue-router';
     import AutoComplete from '@/components/AutoComplete.vue';
     import airportMapping from './airportMapping.json';
+    import newsData from './news.json';
+    import discountsData from './discounts.json';
 
     const airports = ref(airportMapping.airports);
-
+    const news = ref(newsData.news);
+    const discounts = ref(discountsData.discounts);
 
     const toggledMenu = ref({
         book: false,
@@ -298,6 +301,23 @@
                     <button class=" col-start-4 col-end-5 px-2 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md duration-300">Tìm kiếm</button>                
                 </div>
             </div> -->
+        </div>
+    </div>
+
+    <div class="container mx-auto mt-12">
+        <h2 class="text-2xl font-bold mb-4">Ưu đãi và Tin tức</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-for="discount in discounts" :key="discount.code" class="bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2">{{ discount.description }}</h3>
+                <p>Giảm giá: {{ discount.percentage }}%</p>
+                <p>Hạn sử dụng: {{ discount.expiryDate }}</p>
+                <p>Tuyến: {{ discount.route }}</p>
+            </div>
+            <div v-for="newsItem in news" :key="newsItem.title" class="bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2">{{ newsItem.title }}</h3>
+                <p>{{ newsItem.content }}</p>
+                <p>Ngày: {{ newsItem.date }}</p>
+            </div>
         </div>
     </div>
 
